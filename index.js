@@ -26,7 +26,8 @@ try {
 
 const templatesPath = join(process.cwd(), 'templates');
 try {
-  (async function copyInnerFiles(filepath) {
+  // templates -> output
+  await (async function copyInnerFiles(filepath) {
     for await (const content of fs.readdirSync(filepath)) {
       const pathto = join(filepath, content);
       if (fs.statSync(pathto).isDirectory()) {
@@ -38,6 +39,7 @@ try {
           pathto,
           resolve(OUTPUT_PATH, basename(pathto))
         );
+        console.log(chalk.dim(`copied file ${pathto}`));
       }
     }
   })(templatesPath);
