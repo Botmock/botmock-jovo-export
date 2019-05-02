@@ -24,8 +24,23 @@ try {
   fs.mkdirSync(SRC_PATH);
 }
 
-const templatesPath = join(process.cwd(), 'templates');
+// Look for existence of env variables
 try {
+  const file = fs.readFileSync(join(process.cwd(), '.env'), 'utf8');
+  if (file.match(/BOTMOCK_\w+/g).length < 4) {
+    throw new Error(`must define env variables in ${process.cwd()}/.env
+see README.md
+`);
+  }
+} catch (err) {
+  console.error(err.message);
+  process.exit(1);
+}
+
+try {
+  const templatesPath = join(process.cwd(), 'templates');
+  const project = await new SDKWrapper().init();
+  console.log(project);
   // templates -> output
   await (async function copyInnerFiles(filepath) {
     for await (const content of fs.readdirSync(filepath)) {
@@ -45,6 +60,6 @@ try {
   })(templatesPath);
   console.log(chalk.bold('done'));
 } catch (err) {
-  console.error(err.message);
+  console.error(err.stack);
   process.exit(1);
 }
