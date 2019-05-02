@@ -1,28 +1,15 @@
 (await import('dotenv')).config();
+import * as utils from '@botmock-api/utils';
 import chalk from 'chalk';
 import fs from 'fs';
 import { join, sep, resolve, basename } from 'path';
 import { OUTPUT_PATH, MODELS_PATH, SRC_PATH } from './constants';
 import SDKWrapper from './lib/SDKWrapper';
 
-const envpath = join(process.cwd(), '.env');
-// Create .env if it does not exist
 try {
-  await fs.promises.access(envpath, fs.constants.R_OK);
+  await utils.checkEnvVars();
 } catch (_) {
-  fs.writeFileSync(envpath, ``);
-}
-
-try {
-  const file = fs.readFileSync(envpath, 'utf8');
-  // Quit if there are too few env vars
-  if (file.match(/BOTMOCK_\w+/g).length < 4) {
-    throw new Error(`must define env variables in ${process.cwd()}/.env
-see README.md
-`);
-  }
-} catch (err) {
-  console.error(err.message);
+  console.error('too few variables in .env');
   process.exit(1);
 }
 
@@ -69,6 +56,6 @@ try {
   })(templatesPath);
   console.log(chalk.bold('done'));
 } catch (err) {
-  console.error(err.stack);
+  console.error(err);
   process.exit(1);
 }
