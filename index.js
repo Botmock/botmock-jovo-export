@@ -1,9 +1,9 @@
 (await import('dotenv')).config();
-// import * as utils from '@botmock-api/utils';
 import chalk from 'chalk';
 import fs from 'fs';
 import { join, sep, resolve, basename } from 'path';
 import { OUTPUT_PATH, MODELS_PATH, SRC_PATH } from './constants';
+import SDKWrapper from './lib/SDKWrapper';
 
 // Output the following directory hierarchy
 // models/
@@ -33,7 +33,7 @@ try {
         // recurse if this is a directory
         copyInnerFiles(pathto);
       } else {
-        // copy this template file into the output;
+        // copy this template file into the output
         await fs.promises.copyFile(
           pathto,
           resolve(OUTPUT_PATH, basename(pathto))

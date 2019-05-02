@@ -25,7 +25,6 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@botmock-api/utils": "0.5.2",
     "botmock": "1.2.0",
     "chalk": "2.4.2",
     "dotenv": "7.0.0",

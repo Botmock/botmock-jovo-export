@@ -1,5 +1,7 @@
-export const OUTPUT_PATH = `${process.cwd()}/output`;
+import { join } from 'path';
 
-export const MODELS_PATH = `${OUTPUT_PATH}/models`;
+export const OUTPUT_PATH = join(process.cwd(), 'output');
 
-export const SRC_PATH = `${OUTPUT_PATH}/src`;
+export const MODELS_PATH = join(OUTPUT_PATH, 'models');
+
+export const SRC_PATH = join(OUTPUT_PATH, 'src');
