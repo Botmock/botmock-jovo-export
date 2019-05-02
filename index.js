@@ -1,7 +1,8 @@
 (await import('dotenv')).config();
-import fs from 'fs';
+// import * as utils from '@botmock-api/utils';
 import chalk from 'chalk';
-import * as utils from '@botmock-api/utils';
+import fs from 'fs';
+import { join, sep, resolve, basename } from 'path';
 import { OUTPUT_PATH, MODELS_PATH, SRC_PATH } from './constants';
 
 // Output the following directory hierarchy
@@ -23,10 +24,25 @@ try {
   fs.mkdirSync(SRC_PATH);
 }
 
+const templatesPath = join(process.cwd(), 'templates');
 try {
-  await fs.promises.writeFile(`${OUTPUT_PATH}/project.js`, ``);
-  console.log('done');
-} catch (_) {
-  // console.error(err.message);
+  (async function copyInnerFiles(filepath) {
+    for await (const content of fs.readdirSync(filepath)) {
+      const pathto = join(filepath, content);
+      if (fs.statSync(pathto).isDirectory()) {
+        // recurse if this is a directory
+        copyInnerFiles(pathto);
+      } else {
+        // copy this template file into the output;
+        await fs.promises.copyFile(
+          pathto,
+          resolve(OUTPUT_PATH, basename(pathto))
+        );
+      }
+    }
+  })(templatesPath);
+  console.log(chalk.bold('done'));
+} catch (err) {
+  console.error(err.message);
   process.exit(1);
 }
