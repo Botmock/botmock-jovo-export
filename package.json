@@ -1,0 +1,37 @@
+{
+  "name": "botmock-jovo-export",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "module": "index.js",
+  "scripts": {
+    "test": "jest",
+    "start": "node --no-warnings -r esm index.js"
+  },
+  "esm": {
+    "await": true
+  },
+  "keywords": [
+    "botmock",
+    "nodejs"
+  ],
+  "prettier": {
+    "singleQuote": true,
+    "printWidth": 80
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Botmock/botmock-jovo-export.git"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@botmock-api/utils": "0.5.2",
+    "botmock": "1.2.0",
+    "chalk": "2.4.2",
+    "dotenv": "7.0.0",
+    "esm": "3.2.22"
+  },
+  "devDependencies": {
+    "jest": "24.7.1"
+  }
+}
