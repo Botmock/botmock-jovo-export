@@ -5,28 +5,17 @@ import { join, sep, resolve, basename } from 'path';
 import { OUTPUT_PATH, MODELS_PATH, SRC_PATH } from './constants';
 import SDKWrapper from './lib/SDKWrapper';
 
-// Output the following directory hierarchy
-// models/
-//   └── en-US.json
-// src/
-//   |── app.js
-//   |── config.js
-//   └── index.js
-// project.js
+const envpath = join(process.cwd(), '.env');
+// Create .env if it does not exist
 try {
-  await fs.promises.access(OUTPUT_PATH, fs.constants.R_OK);
-  await fs.promises.access(MODELS_PATH, fs.constants.R_OK);
-  await fs.promises.access(SRC_PATH, fs.constants.R_OK);
+  await fs.promises.access(envpath, fs.constants.R_OK);
 } catch (_) {
-  // Create dirs if inexistant
-  fs.mkdirSync(OUTPUT_PATH);
-  fs.mkdirSync(MODELS_PATH);
-  fs.mkdirSync(SRC_PATH);
+  fs.writeFileSync(envpath, ``);
 }
 
-// Look for existence of env variables
 try {
-  const file = fs.readFileSync(join(process.cwd(), '.env'), 'utf8');
+  const file = fs.readFileSync(envpath, 'utf8');
+  // Quit if there are too few env vars
   if (file.match(/BOTMOCK_\w+/g).length < 4) {
     throw new Error(`must define env variables in ${process.cwd()}/.env
 see README.md
@@ -37,6 +26,26 @@ see README.md
   process.exit(1);
 }
 
+// Attempt to read from needed directories
+try {
+  await fs.promises.access(OUTPUT_PATH, fs.constants.R_OK);
+  await fs.promises.access(MODELS_PATH, fs.constants.R_OK);
+  await fs.promises.access(SRC_PATH, fs.constants.R_OK);
+} catch (_) {
+  // Create directories if inexistant
+  fs.mkdirSync(OUTPUT_PATH);
+  fs.mkdirSync(MODELS_PATH);
+  fs.mkdirSync(SRC_PATH);
+}
+
+// Output the following directory hierarchy
+// models/
+//   └── en-US.json
+// src/
+//   |── app.js
+//   |── config.js
+//   └── index.js
+// project.js
 try {
   const templatesPath = join(process.cwd(), 'templates');
   const project = await new SDKWrapper().init();
