@@ -2,7 +2,7 @@
 import * as utils from '@botmock-api/utils';
 import chalk from 'chalk';
 import fs from 'fs';
-import { join, sep, resolve, basename } from 'path';
+import path from 'path';
 import { OUTPUT_PATH, MODELS_PATH, SRC_PATH } from './constants';
 import SDKWrapper from './lib/SDKWrapper';
 
@@ -25,36 +25,26 @@ try {
   fs.mkdirSync(SRC_PATH);
 }
 
-// Output the following directory hierarchy
-// models/
-//   └── en-US.json
-// src/
-//   |── app.js
-//   |── config.js
-//   └── index.js
-// project.js
 try {
-  const templatesPath = join(process.cwd(), 'templates');
+  const templatesPath = path.join(process.cwd(), 'templates');
   const project = await new SDKWrapper().init();
-  console.log(project);
-  // templates -> output
+  // Copy files from /templates into /output, with project data filled in
   await (async function copyInnerFiles(filepath) {
     for await (const content of fs.readdirSync(filepath)) {
-      const pathto = join(filepath, content);
+      const pathto = path.join(filepath, content);
       if (fs.statSync(pathto).isDirectory()) {
         // recurse if this is a directory
         copyInnerFiles(pathto);
       } else {
-        // copy this template file into the output
-        await fs.promises.copyFile(
+        // copy this template file into the output directory
+        fs.promises.copyFile(
           pathto,
-          resolve(OUTPUT_PATH, basename(pathto))
+          path.resolve(OUTPUT_PATH, path.basename(pathto))
         );
-        console.log(chalk.dim(`copied file ${pathto}`));
       }
     }
   })(templatesPath);
-  console.log(chalk.bold('done'));
+  // console.log(chalk.bold('done'));
 } catch (err) {
   console.error(err);
   process.exit(1);
