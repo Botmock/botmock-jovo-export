@@ -1,9 +1,9 @@
-module.exports = {
+{
   alexaSkill: {
-    nlu: 'alexa'
+    nlu: 'alexa';
   },
-  googleAction: {
+  googleActions: {
     nlu: 'dialogflow'
   },
   endpoint: process.env.JOVO_WEBHOOK_URL
-};
+}
