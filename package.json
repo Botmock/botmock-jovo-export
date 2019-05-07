@@ -28,10 +28,10 @@
     "@botmock-api/utils": "0.6.0",
     "botmock": "1.2.0",
     "chalk": "2.4.2",
-    "dotenv": "7.0.0",
+    "dotenv": "8.0.0",
     "esm": "3.2.22"
   },
   "devDependencies": {
-    "jest": "24.7.1"
+    "jest": "24.8.0"
   }
 }

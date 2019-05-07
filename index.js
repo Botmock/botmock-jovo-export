@@ -29,7 +29,7 @@ try {
 // copy files from /templates into /output, with project data filled in
 try {
   const templatesPath = path.join(process.cwd(), 'templates');
-  const project = await new SDKWrapper().init();
+  const { name, messages, intents } = await new SDKWrapper().init();
   // given the path to the templates, search directories for files to copy
   await (async function copyInnerFiles(filepath) {
     for (const content of fs.readdirSync(filepath)) {
@@ -57,8 +57,9 @@ try {
             );
             const file = fs.readFileSync(pathto, 'utf8');
             const data = JSON.parse(file);
-            data.invocation = await getWelcomeIntent(project.messages);
-            data.intents = await getIntents(project.intents);
+            // fill in project-data-dependent fields
+            data.invocation = getWelcomeIntentName(messages, intents);
+            data.intents = getIntents(intents);
             fs.writeFileSync(dest, JSON.stringify(data));
             break;
         }
@@ -72,7 +73,18 @@ try {
 }
 
 // find name of welcome intent
-async function getWelcomeIntent(messages) {}
+function getWelcomeIntentName(messages, intents = []) {
+  const { next_message_ids } = messages.find(m => m.is_root);
+  const [{ intent = {} }] = next_message_ids.filter(
+    obj => obj.intent && obj.intent.value
+  );
+  return intent.label || '';
+}
 
 // map to collection containing name and phrases keys
-async function getIntents(intents) {}
+function getIntents(intents) {
+  return intents.map(i => ({
+    name: i.name,
+    phrases: i.utterances.map(u => u.text)
+  }));
+}
