@@ -32,15 +32,36 @@ try {
   const project = await new SDKWrapper().init();
   // given the path to the templates, search directories for files to copy
   await (async function copyInnerFiles(filepath) {
-    for await (const content of fs.readdirSync(filepath)) {
+    for (const content of fs.readdirSync(filepath)) {
       const pathto = path.join(filepath, content);
       if (fs.statSync(pathto).isDirectory()) {
         // recurse if this is a directory
         copyInnerFiles(pathto);
       } else {
-        const dest = path.resolve(OUTPUT_PATH, path.basename(pathto));
-        // the file does not need to have values filled in and can just be copied
-        fs.promises.copyFile(pathto, dest);
+        switch (path.basename(pathto)) {
+          case 'project.js':
+            // the file does not need to have values filled in and can just be
+            // copied into /output
+            fs.copyFileSync(
+              pathto,
+              path.resolve(OUTPUT_PATH, path.basename(pathto))
+            );
+            break;
+          case 'en-US.json':
+            const dest = path.resolve(
+              OUTPUT_PATH,
+              pathto
+                .split(path.sep)
+                .slice(-2)
+                .join(path.sep)
+            );
+            const file = fs.readFileSync(pathto, 'utf8');
+            const data = JSON.parse(file);
+            data.invocation = await getWelcomeIntent(project.messages);
+            data.intents = await getIntents(project.intents);
+            fs.writeFileSync(dest, JSON.stringify(data));
+            break;
+        }
       }
     }
   })(templatesPath);
@@ -49,3 +70,9 @@ try {
   console.error(err);
   process.exit(1);
 }
+
+// find name of welcome intent
+async function getWelcomeIntent(messages) {}
+
+// map to collection containing name and phrases keys
+async function getIntents(intents) {}
