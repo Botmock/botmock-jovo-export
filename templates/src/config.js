@@ -1,13 +1,17 @@
 // ------------------------------------------------------------------
-// JOVO PROJECT CONFIGURATION
+// APP CONFIGURATION
 // ------------------------------------------------------------------
 
 module.exports = {
-  alexaSkill: {
-    nlu: "alexa"
+  logging: true,
+
+  intentMap: {
+    "AMAZON.StopIntent": "END"
   },
-  googleAction: {
-    nlu: "dialogflow"
-  },
-  endpoint: "${JOVO_WEBHOOK_URL}"
+
+  db: {
+    FileDb: {
+      pathToFile: "../db/db.json"
+    }
+  }
 };

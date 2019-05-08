@@ -3,8 +3,10 @@ import * as utils from '@botmock-api/utils';
 import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
-import SDKWrapper from './lib/SDKWrapper';
+import { promisify } from 'util';
+import { exec as exec_ } from 'child_process';
 import { OUTPUT_PATH, MODELS_PATH, SRC_PATH } from './constants';
+import SDKWrapper from './lib/SDKWrapper';
 
 // look for existence of environment variables
 try {
@@ -18,12 +20,12 @@ try {
 try {
   await fs.promises.access(OUTPUT_PATH, fs.constants.R_OK);
   await fs.promises.access(MODELS_PATH, fs.constants.R_OK);
-  // await fs.promises.access(SRC_PATH, fs.constants.R_OK);
+  await fs.promises.access(SRC_PATH, fs.constants.R_OK);
 } catch (_) {
   // create directories if inexistant
   fs.mkdirSync(OUTPUT_PATH);
   fs.mkdirSync(MODELS_PATH);
-  // fs.mkdirSync(SRC_PATH);
+  fs.mkdirSync(SRC_PATH);
 }
 
 // copy files from /templates into /output, with project data filled in
@@ -39,6 +41,7 @@ try {
         copyInnerFiles(pathto);
       } else {
         switch (path.basename(pathto)) {
+          case 'package.json':
           case 'project.js':
             // the file does not need to have values filled in and can just be
             // copied into /output
@@ -62,10 +65,23 @@ try {
             data.intents = getIntents(intents);
             fs.writeFileSync(dest, JSON.stringify(data));
             break;
+          default:
+            // copy contents of /src
+            fs.copyFileSync(
+              pathto,
+              path.resolve(SRC_PATH, path.basename(pathto))
+            );
         }
       }
     }
   })(templatesPath);
+  console.log('installing dependencies');
+  // cd into /output
+  process.chdir('./output');
+  const exec = promisify(exec_);
+  await exec('npm i');
+  await exec('jovo build');
+  process.chdir('../');
   console.log(chalk.bold('done'));
 } catch (err) {
   console.error(err);
@@ -85,6 +101,8 @@ function getWelcomeIntentName(messages, intents = []) {
 function getIntents(intents) {
   return intents.map(i => ({
     name: i.name,
-    phrases: i.utterances.map(u => u.text)
+    phrases: i.utterances.map(u => u.text),
+    // TODO: see https://github.com/jovotech/jovo-templates/blob/master/01_helloworld/javascript/models/en-US.json#L20
+    inputs: []
   }));
 }
