@@ -1,7 +1,5 @@
 # Botmock Jovo Export
 
-> requires node.js >= 10.5.x and a global install of `jovo-cli`
-
 Bring a [Jovo](https://www.jovo.tech) project to parity with a [Botmock](https://botmock.com) project from the command line.
 
 - Tutorial Video (Coming Soon)
