@@ -98,7 +98,7 @@ function getIntents(intents) {
       let { text } = utterance;
       const match = regex.exec(text);
       if (match) {
-        // Replace %entity with {{entity}}
+        // Replace %input with {{input}}
         text = text.replace(match[0], `{{${match[1]}}}`);
       }
       return text;
