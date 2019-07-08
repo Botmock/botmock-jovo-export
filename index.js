@@ -32,8 +32,9 @@ try {
 try {
   const templatesPath = path.join(process.cwd(), 'templates');
   const { name, messages, intents } = await new SDKWrapper().init();
+
   // given the path to the templates, search directories for files to copy
-  await (async function copyInnerFiles(filepath) {
+  await(async function copyInnerFiles(filepath) {
     for (const content of fs.readdirSync(filepath)) {
       const pathto = path.join(filepath, content);
       if (fs.statSync(pathto).isDirectory()) {
@@ -61,9 +62,9 @@ try {
             const file = fs.readFileSync(pathto, 'utf8');
             const data = JSON.parse(file);
             // fill in project-data-dependent fields
-            data.invocation = getWelcomeIntentName(messages, intents);
+            data.invocation = name.toLowerCase();
             data.intents = getIntents(intents);
-            fs.writeFileSync(dest, JSON.stringify(data));
+            fs.writeFileSync(dest, JSON.stringify(data, null, 4));
             break;
           default:
             // copy contents of /src
@@ -88,20 +89,20 @@ try {
   process.exit(1);
 }
 
-// find name of welcome intent
-function getWelcomeIntentName(messages, intents = []) {
-  const { next_message_ids } = messages.find(m => m.is_root);
-  const [{ intent = {} }] = next_message_ids.filter(
-    obj => obj.intent && obj.intent.value
-  );
-  return intent.label || '';
-}
-
 // map to collection containing name and phrases keys
 function getIntents(intents) {
   return intents.map(i => ({
     name: i.name,
-    phrases: i.utterances.map(u => u.text),
+    phrases: i.utterances.map((utterance) => {
+      const regex = /%([^\s]+)/g;
+      const { text } = utterance;
+      const match = regex.exec(text);
+      if (match) {
+        // Replace %input with {{input}}
+        return text.replace(match[0], `{${match[1]}}`);
+      }
+      return text;
+    }),
     // TODO: see https://github.com/jovotech/jovo-templates/blob/master/01_helloworld/javascript/models/en-US.json#L20
     inputs: []
   }));
