@@ -99,7 +99,7 @@ function getIntents(intents) {
       const match = regex.exec(text);
       if (match) {
         // Replace %input with {{input}}
-        return text.replace(match[0], `{{${match[1]}}}`);
+        return text.replace(match[0], `{${match[1]}}`);
       }
       return text;
     }),
