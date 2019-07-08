@@ -34,7 +34,7 @@ try {
   const { name, messages, intents } = await new SDKWrapper().init();
 
   // given the path to the templates, search directories for files to copy
-  await (async function copyInnerFiles(filepath) {
+  await(async function copyInnerFiles(filepath) {
     for (const content of fs.readdirSync(filepath)) {
       const pathto = path.join(filepath, content);
       if (fs.statSync(pathto).isDirectory()) {
@@ -95,11 +95,11 @@ function getIntents(intents) {
     name: i.name,
     phrases: i.utterances.map((utterance) => {
       const regex = /%([^\s]+)/g;
-      let { text } = utterance;
+      const { text } = utterance;
       const match = regex.exec(text);
       if (match) {
         // Replace %input with {{input}}
-        text = text.replace(match[0], `{{${match[1]}}}`);
+        return text.replace(match[0], `{{${match[1]}}}`);
       }
       return text;
     }),
