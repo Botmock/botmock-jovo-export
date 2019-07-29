@@ -16,7 +16,7 @@
     "nodejs"
   ],
   "prettier": {
-    "singleQuote": true,
+    "singleQuote": false,
     "printWidth": 80
   },
   "repository": {

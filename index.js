@@ -1,18 +1,19 @@
-(await import('dotenv')).config();
-import * as utils from '@botmock-api/utils';
-import chalk from 'chalk';
-import fs from 'fs';
-import path from 'path';
-import { promisify } from 'util';
-import { exec as exec_ } from 'child_process';
-import { OUTPUT_PATH, MODELS_PATH, SRC_PATH } from './constants';
-import SDKWrapper from './lib/SDKWrapper';
+(await import("dotenv")).config();
+import * as utils from "@botmock-api/utils";
+import chalk from "chalk";
+import fs from "fs";
+import path from "path";
+import assert from "assert";
+import { promisify } from "util";
+import { exec as exec_ } from "child_process";
+import { OUTPUT_PATH, MODELS_PATH, SRC_PATH } from "./constants";
+import SDKWrapper from "./lib/SDKWrapper";
 
 // look for existence of environment variables
 try {
   await utils.checkEnvVars();
 } catch (_) {
-  console.error('too few variables in .env');
+  console.error("too few variables in .env");
   process.exit(1);
 }
 
@@ -30,11 +31,11 @@ try {
 
 // copy files from /templates into /output, with project data filled in
 try {
-  const templatesPath = path.join(process.cwd(), 'templates');
-  const { name, messages, intents } = await new SDKWrapper().init();
-
+  const templatesPath = path.join(process.cwd(), "templates");
+  const sdk = new SDKWrapper();
+  const { name, messages, intents } = await sdk.init();
   // given the path to the templates, search directories for files to copy
-  await(async function copyInnerFiles(filepath) {
+  await (async function copyInnerFiles(filepath) {
     for (const content of fs.readdirSync(filepath)) {
       const pathto = path.join(filepath, content);
       if (fs.statSync(pathto).isDirectory()) {
@@ -42,8 +43,8 @@ try {
         copyInnerFiles(pathto);
       } else {
         switch (path.basename(pathto)) {
-          case 'package.json':
-          case 'project.js':
+          case "package.json":
+          case "project.js":
             // the file does not need to have values filled in and can just be
             // copied into /output
             fs.copyFileSync(
@@ -51,7 +52,7 @@ try {
               path.resolve(OUTPUT_PATH, path.basename(pathto))
             );
             break;
-          case 'en-US.json':
+          case "en-US.json":
             const dest = path.resolve(
               OUTPUT_PATH,
               pathto
@@ -59,7 +60,7 @@ try {
                 .slice(-2)
                 .join(path.sep)
             );
-            const file = fs.readFileSync(pathto, 'utf8');
+            const file = fs.readFileSync(pathto, "utf8");
             const data = JSON.parse(file);
             // fill in project-data-dependent fields
             data.invocation = name.toLowerCase();
@@ -76,14 +77,14 @@ try {
       }
     }
   })(templatesPath);
-  console.log('installing dependencies');
+  console.log("installing dependencies");
   // cd into /output
-  process.chdir('./output');
+  process.chdir("./output");
   const exec = promisify(exec_);
-  await exec('npm i');
-  await exec('jovo build');
-  process.chdir('../');
-  console.log(chalk.bold('done'));
+  await exec("npm i");
+  await exec("jovo build");
+  process.chdir("../");
+  console.log(chalk.bold("done"));
 } catch (err) {
   console.error(err);
   process.exit(1);
@@ -93,7 +94,7 @@ try {
 function getIntents(intents) {
   return intents.map(i => ({
     name: i.name,
-    phrases: i.utterances.map((utterance) => {
+    phrases: i.utterances.map(utterance => {
       const regex = /%([^\s]+)/g;
       const { text } = utterance;
       const match = regex.exec(text);
