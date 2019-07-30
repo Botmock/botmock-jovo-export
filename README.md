@@ -22,7 +22,7 @@ node --version
 
 - in the created directory, create `.env` and fill in the correct values for the following:
 
-```console
+```shell
 BOTMOCK_TEAM_ID=@botmock-team-id
 BOTMOCK_PROJECT_ID=@botmock-project-id
 BOTMOCK_BOARD_ID=@botmock-board-id
