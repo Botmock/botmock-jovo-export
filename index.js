@@ -3,7 +3,7 @@ import * as utils from "@botmock-api/utils";
 import chalk from "chalk";
 import fs from "fs";
 import path from "path";
-import assert from "assert";
+// import assert from "assert";
 import { promisify } from "util";
 import { exec as exec_ } from "child_process";
 import { OUTPUT_PATH, MODELS_PATH, SRC_PATH } from "./constants";
