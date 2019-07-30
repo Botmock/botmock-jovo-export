@@ -1,7 +1,7 @@
 {
   "name": "botmock-jovo-export",
   "version": "1.0.0",
-  "description": "",
+  "description": "bring a jovo project to parity with a botmock project from the command line",
   "main": "index.js",
   "module": "index.js",
   "scripts": {

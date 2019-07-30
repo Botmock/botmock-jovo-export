@@ -6,7 +6,7 @@ Bring a [Jovo](https://www.jovo.tech) project to parity with a [Botmock](https:/
 - Documentation (Coming Soon)
 - [Support Email](mailto:help@botmock.com)
 
-## Prerequisites
+## prerequisites
 
 - [Node.js](https://nodejs.org/en/) >= 10.16.x
 
@@ -16,7 +16,7 @@ node --version
 
 - [Jovo](https://github.com/jovotech/jovo-cli)
 
-### Guide
+### guide
 
 - clone this repository by running `git clone git@github.com:Botmock/botmock-jovo-export.git`
 
@@ -45,11 +45,11 @@ jovo build
 jovo run
 ```
 
-## Want to help?
+## want to help?
 
 Found bugs or have some ideas to improve this integration? We'd love to to hear from you! You can start by submitting an issue at the [Issues](https://github.com/Botmock/botmock-jovo-export/issues) tab. If you want, feel free to submit a pull request and propose a change as well!
 
-### Submitting a Pull Request
+### submitting a Pull Request
 
 1. Create an issue; the more information, the better!
 2. Fork the Repository.
@@ -58,6 +58,6 @@ Found bugs or have some ideas to improve this integration? We'd love to to hear 
 
 _NOTE: Make sure to leave any sensitive information out of an issue when reporting a bug with imagery or copying and pasting error data. We want to make sure all your info is safe!_
 
-## License
+## license
 
 Botmock Jovo Export is copyright © 2019 Botmock. It is free software, and may be redistributed under the terms specified in the LICENSE file.
