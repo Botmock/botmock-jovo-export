@@ -8,7 +8,7 @@ Bring a [Jovo](https://www.jovo.tech) project to parity with a [Botmock](https:/
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org/en/) >= 10.15.x
+- [Node.js](https://nodejs.org/en/) >= 10.16.x
 
 ```shell
 node --version
@@ -20,7 +20,7 @@ node --version
 
 - clone this repository by running `git clone git@github.com:Botmock/botmock-jovo-export.git`
 
-- in the created directory, create `.env` fill in the correct values for the following:
+- in the created directory, create `.env` and fill in the correct values for the following:
 
 ```console
 BOTMOCK_TEAM_ID=@botmock-team-id
@@ -35,7 +35,15 @@ JOVO_WEBHOOK_URL=@jovo-webhook-url
 
 - run `npm start`
 
-- run any [jovo commands](https://github.com/jovotech/jovo-cli#commands) from within `/output`
+- run any [jovo commands](https://github.com/jovotech/jovo-cli#commands) from within `/output`:
+
+```
+cd output
+
+jovo build
+
+jovo run
+```
 
 ## Want to help?
 
@@ -43,9 +51,9 @@ Found bugs or have some ideas to improve this integration? We'd love to to hear 
 
 ### Submitting a Pull Request
 
-1. Create an issue if possible, the more information, the better!
+1. Create an issue; the more information, the better!
 2. Fork the Repository.
-3. Make a new change under a branch based on master. Ideally, the branch should be based on the issue you made such as "issue-530"
+3. Make a change under a branch based on master. Ideally, the branch should be based on the issue you made such as "issue-530"
 4. Make the Pull Request, followed by a brief description of the changes you've made. Reference the issue.
 
 _NOTE: Make sure to leave any sensitive information out of an issue when reporting a bug with imagery or copying and pasting error data. We want to make sure all your info is safe!_
