@@ -3,21 +3,11 @@ import * as utils from "@botmock-api/utils";
 import { remove } from "fs-extra";
 import fs from "fs";
 import path from "path";
-// import assert from "assert";
 import { promisify } from "util";
 import { exec as exec_ } from "child_process";
 import { OUTPUT_PATH, MODELS_PATH, SRC_PATH } from "./constants";
 import SDKWrapper from "./lib/SDKWrapper";
 
-// look for existence of environment variables
-try {
-  await utils.checkEnvVars();
-} catch (_) {
-  console.error("too few variables in .env");
-  process.exit(1);
-}
-
-// copy files from /templates into /output, with project data filled in
 try {
   await remove(OUTPUT_PATH);
   fs.mkdirSync(OUTPUT_PATH);
@@ -69,33 +59,48 @@ try {
       }
     }
   })(templatesPath);
-  console.log("installing dependencies.");
+  console.info("installing dependencies.");
   process.chdir("./output");
   const exec = promisify(exec_);
   await exec("npm i");
+  console.info("building project.");
   await exec("jovo build");
   process.chdir("../");
-  console.log("done.");
+  console.info("done.");
 } catch (err) {
   console.error(err);
   process.exit(1);
 }
 
-// map to collection containing name and phrases keys
 function getIntents(intents) {
-  return intents.map(i => ({
-    name: i.name,
-    phrases: i.utterances.map(utterance => {
-      const regex = /%([^\s]+)/g;
-      const { text } = utterance;
-      const match = regex.exec(text);
-      if (match) {
-        // Replace %input with {{input}}
-        return text.replace(match[0], `{${match[1]}}`);
-      }
-      return text;
-    }),
-    // TODO: see https://github.com/jovotech/jovo-templates/blob/master/01_helloworld/javascript/models/en-US.json#L20
-    inputs: []
-  }));
+  return intents.map(intent => {
+    return {
+      name: intent.name,
+      phrases: intent.utterances.map(utterance => {
+        return utils.symmetricWrap(utterance.text, { l: "{", r: "}" });
+      }),
+      inputs: Object.entries(intent.utterances.reduce((acc, utterance) => {
+        return {
+          ...acc,
+          ...utterance.variables.reduce((accu, variable) => {
+            return {
+              ...accu,
+              [variable.name.replace(/%/g, "")]: {
+                type: {
+                  alexa: `AMAZON.${variable.entity.toUpperCase()}`,
+                  dialogflow: `@sys.any`
+                }
+              }
+            };
+          }, {})
+        }
+      }, [])).map(pair => {
+        const [name, { type }] = pair;
+        return {
+          name,
+          type
+        }
+      })
+    }
+  });
 }
