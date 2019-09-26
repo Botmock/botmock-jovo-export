@@ -8,7 +8,7 @@ Bring a [Jovo](https://www.jovo.tech) project to parity with a [Botmock](https:/
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org/en/) >= 10.16.x
+- [Node.js](https://nodejs.org/en/) >= 12.x
 
 ```shell
 node --version
@@ -19,31 +19,20 @@ node --version
 ### Guide
 
 - clone this repository by running `git clone git@github.com:Botmock/botmock-jovo-export.git`
-
-- in the created directory, create `.env` and fill in the correct values for the following:
-
+- `cd` into `botmock-jovo-export`
+- create `.env` containing the below content with your values filled in:
 ```shell
 BOTMOCK_TEAM_ID=@botmock-team-id
 BOTMOCK_PROJECT_ID=@botmock-project-id
 BOTMOCK_BOARD_ID=@botmock-board-id
 BOTMOCK_TOKEN=@botmock-token
-JOVO_WEBHOOK_URL=@jovo-webhook-url
 
 ```
 
-- run `npm i`
-
+- run `npm install`
 - run `npm start`
-
-- run any [jovo commands](https://github.com/jovotech/jovo-cli#commands) from within `/output`:
-
-```
-cd output
-
-jovo build
-
-jovo run
-```
+- `cd` into `output`
+- run `jovo run` to generate your [webhook url](https://www.jovo.tech/docs/cli/run)
 
 ## Want to help?
 
